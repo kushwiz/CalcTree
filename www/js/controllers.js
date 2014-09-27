@@ -6,15 +6,10 @@ angular.module('starter.controllers', [])
     showDelete: false
   };
 
-  $scope.init = function() {
-    Notes.getRoots().then(function(result){
-      $scope.notes = result;
-      $scope.rootNote = {title: 'Root Folder', note_category: 1};
-    });
-    $scope.data = {
-      showDelete: false
-    };
-  };
+  Notes.getRoots().then(function(result){
+    $scope.notes = result;
+    $scope.rootNote = {title: 'Root Folder', note_category: 1};
+  });
 
   $scope.logger = function(string) {
     console.log(string);
@@ -30,8 +25,7 @@ angular.module('starter.controllers', [])
   $scope.friends = Friends.all();
 })
 
-.controller('FriendDetailCtrl', function($scope, $stateParams, Notes) {
-  console.log('here in');
+.controller('FriendDetailCtrl', function($scope, $stateParams, Notes, $state) {
   Notes.getById($stateParams.friendId).then(function(result){
     $scope.rootNote = result;
     $scope.dummy = angular.copy($scope.rootNote);
@@ -45,8 +39,8 @@ angular.module('starter.controllers', [])
   });
 
   $scope.updateNote = function(note) {
-    Note.updateNote(note);
-    $location.path('/friend/'+note.parent);
+    Notes.updateNote(note);
+    $state.go('tab.friend-detail', {friendId: note.parent});
   };
 
 })

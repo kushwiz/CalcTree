@@ -83,8 +83,10 @@ angular.module('starter.services', ['starter.config'])
     return self;
 })
 
-.factory('Notes', function(DB) {
+.factory('Notes', function(DB, $rootScope) {
     var self = this;
+
+    var parentId = null;
 
     self.all = function() {
         return DB.query('SELECT * FROM notes')
@@ -114,10 +116,24 @@ angular.module('starter.services', ['starter.config'])
       });
     };
 
+    self.updateSum = function(noteId) {
+      DB.query('SELECT SUM(amount) as samount FROM notes WHERE parent = ?', [noteId])
+      .then(function(result){
+        var sum = DB.fetch(result).samount;
+        DB.query('UPDATE notes SET amount = ? WHERE id = ?', [sum, noteId]);
+        self.getById(noteId).then(function(result) {
+          parentId = result.parent;
+          if (parentId > 0) {
+            self.updateSum(parentId);
+          }
+        });
+      });
+    };
+
     self.updateNote = function(note) {
       return DB.query('UPDATE notes SET title = ?, amount = ? WHERE id = ?', [note.title, note.amount, note.id])
       .then(function(result){
-        return 0;
+        self.updateSum(note.parent);
       });
     };
 
