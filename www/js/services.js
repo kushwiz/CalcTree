@@ -46,9 +46,12 @@ angular.module('starter.services', ['starter.config'])
             console.log('Table ' + table.name + ' initialized');
 
         });
-        // self.db.transaction(function(tx){
-        //   tx.executeSql("INSERT INTO notes(title, amount, created_at, parent, note_category) VALUES(?,?,?,?,?)", ["YT", -500.0,(new Date).getTime().toString(), 1, 2]);
-        // });
+        self.db.transaction(function(tx){
+
+        // tx.executeSql("INSERT INTO notes(title, amount, created_at, parent, note_category) VALUES(?,?,?,?,?)", ["WT", -500.0,(new Date).getTime().toString(), 1, 1]);
+        // tx.executeSql("INSERT INTO notes(title, amount, created_at, parent, note_category) VALUES(?,?,?,?,?)", ["TR", -500.0,(new Date).getTime().toString(), 7, 2]);
+        //   tx.executeSql("INSERT INTO notes(title, amount, created_at, parent, note_category) VALUES(?,?,?,?,?)", ["WT", -500.0,(new Date).getTime().toString(), 6, 2]);
+        });
     };
 
     self.query = function(query, bindings) {
@@ -117,6 +120,7 @@ angular.module('starter.services', ['starter.config'])
     };
 
     self.updateSum = function(noteId) {
+      console.log('updateSum:'+noteId);
       DB.query('SELECT SUM(amount) as samount FROM notes WHERE parent = ?', [noteId])
       .then(function(result){
         var sum = DB.fetch(result).samount;
@@ -133,7 +137,32 @@ angular.module('starter.services', ['starter.config'])
     self.updateNote = function(note) {
       return DB.query('UPDATE notes SET title = ?, amount = ? WHERE id = ?', [note.title, note.amount, note.id])
       .then(function(result){
+        if(note.parent > 0){
+          self.updateSum(note.parent);
+        }
+      });
+    };
+
+    self.deleteNote = function(note) {
+      DB.query('DELETE from notes WHERE id = ?', [note.id]);
+      if(note.parent > 0) {
         self.updateSum(note.parent);
+      }
+      return DB.query('SELECT * from notes WHERE parent = ? AND note_category = ?', [note.id, 1])
+      .then(function(result){
+        var l_notes = DB.fetchAll(result);
+        l_notes.forEach(function(n){
+          self.deleteNote(n);
+        });
+      });
+    };
+
+    self.createNote = function(note) {
+      return DB.query("INSERT INTO notes(title, amount, created_at, parent, note_category) VALUES(?,?,?,?,?)",[note.title, note.amount, (new Date).getTime().toString(), note.parent, note.note_category])
+      .then(function(result) {
+        if(note.parent > 0) {
+          self.updateSum(note.parent);
+        }
       });
     };
 

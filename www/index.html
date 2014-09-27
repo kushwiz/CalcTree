@@ -23,6 +23,27 @@
     <script src="js/config.js"></script>
     <script src="js/controllers.js"></script>
     <script src="js/services.js"></script>
+    <script type="text/javascript">
+      angular.module('starter').directive('ngConfirmClick', [function() {
+        return {
+          restrict: 'A',
+          link: function(scope, element, attrs) {
+            element.bind('click', function() {
+              var condition = scope.$eval(attrs.ngConfirmCondition);
+              if(condition){
+                var message = attrs.ngConfirmMessage;
+                if (message && confirm(message)) {
+                  scope.$apply(attrs.ngConfirmClick);
+                }
+              }
+              else{
+                scope.$apply(attrs.ngConfirmClick);
+              }
+            });
+          }
+        }
+      }]);
+    </script>
     <style type="text/css">
     .negative {
       color: red;
@@ -32,17 +53,17 @@
     }
     </style>
   </head>
-  <body ng-app="starter" ng-controller="DashCtrl" ng-init="init()" animation="slide-left-right-ios7">
+  <body ng-app="starter" ng-controller="DashCtrl" >
     <!--
       The nav bar that will be updated as we navigate between views.
     -->
-    <ion-nav-bar class="bar-stable nav-title-slide-ios7">
+    <!-- <ion-nav-bar class="bar-stable nav-title-slide-ios7">
         <ion-nav-back-button class="button-icon ion-ios7-arrow-back">Back
         </ion-nav-back-button>
         <div class="buttons right-buttons">
-          <button class="button button-icon icon ion-ios7-minus-outline" ng-click="data.showDelete = !data.showDelete"/>
+          <button class="button button-icon icon ion-ios7-minus-outline" ng-click="data.showDelete = !data.showDelete" ng-if="rootNote.note_category == 1"/>
         </div>
-    </ion-nav-bar>
+    </ion-nav-bar> -->
     <!-- 
       The views will be rendered in the <ion-nav-view> directive below
       Templates are in the /templates folder (but you could also

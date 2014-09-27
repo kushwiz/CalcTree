@@ -1,14 +1,23 @@
 <ion-view title="{{ rootNote.title || 'Root'}}">
 
+    <ion-nav-bar class="bar-stable nav-title-slide-ios7">
+        <ion-nav-back-button class="button-icon ion-ios7-arrow-back">Back
+        </ion-nav-back-button>
+        <div class="buttons right-buttons" ng-if="rootNote.note_category == 1">
+          <button class="button button-icon icon ion-ios7-minus-outline" ng-click="data.showDelete = !data.showDelete"/>
+          <button class="button button-icon icon ion-ios7-plus-outline" ng-click="newNote()"/>
+        </div>
+    </ion-nav-bar>
+
   <ion-content class="padding" ng-switch="rootNote.note_category">
     <ion-list show-delete="data.showDelete" can-swipe="true" ng-switch-when="1">
       <ion-item ng-repeat="note in notes" icon="icon ion-plus-round" href="#/tab/friend/{{note.id}}" ng-switch="note.note_category">
         <div class='ion-folder' ng-switch-when='1'>  {{note.title}} </div>
         <div class='ion-document' ng-switch-when='2'> {{note.title}} </div>
         <div ng-class="{true: 'positive', false: 'negative'}[note.amount >= 0]">
-        {{note.amount}}</div>
+        ₹{{prettyAmount(note.amount)}}</div>
         {{parseDate(note.created_at)}}
-        <ion-delete-button class="ion-minus-circled" ng-click="logger(note.id)">
+        <ion-delete-button class="ion-minus-circled" ng-confirm-message="Are you sure?" ng-confirm-click="deleteNote(note)" ng-confirm-condition="true">
         </ion-delete-button>
         <ion-option-button class="button button-info" ng-click="edit(item)">
           Edit
