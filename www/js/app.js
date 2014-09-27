@@ -21,6 +21,10 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   });
 })
 
+.run(function(DB) {
+    DB.init();
+})
+
 .config(function($stateProvider, $urlRouterProvider) {
 
   // Ionic uses AngularUI Router which uses the concept of states
@@ -32,7 +36,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     // setup an abstract state for the tabs directive
     .state('tab', {
       url: "/tab",
-      abstract: true,
+      //abstract: false,
       templateUrl: "templates/tabs.html"
     })
 
@@ -60,8 +64,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     .state('tab.friend-detail', {
       url: '/friend/:friendId',
       views: {
-        'tab-friends': {
-          templateUrl: 'templates/friend-detail.html',
+        'tab-dash': {
+          templateUrl: 'templates/tab-dash.html',
           controller: 'FriendDetailCtrl'
         }
       }

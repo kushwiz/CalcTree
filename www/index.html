@@ -20,17 +20,28 @@
 
     <!-- your app's js -->
     <script src="js/app.js"></script>
+    <script src="js/config.js"></script>
     <script src="js/controllers.js"></script>
     <script src="js/services.js"></script>
+    <style type="text/css">
+    .negative {
+      color: red;
+    }
+    .positive {
+      color: green;
+    }
+    </style>
   </head>
-  <body ng-app="starter" animation="slide-left-right-ios7">
-    <!-- 
+  <body ng-app="starter" ng-controller="DashCtrl" ng-init="init()" animation="slide-left-right-ios7">
+    <!--
       The nav bar that will be updated as we navigate between views.
     -->
     <ion-nav-bar class="bar-stable nav-title-slide-ios7">
-      <ion-nav-back-button class="button-icon icon  ion-ios7-arrow-back">
-        Back
-      </ion-nav-back-button>
+        <ion-nav-back-button class="button-icon ion-ios7-arrow-back">Back
+        </ion-nav-back-button>
+        <div class="buttons right-buttons">
+          <button class="button button-icon icon ion-ios7-minus-outline" ng-click="data.showDelete = !data.showDelete"/>
+        </div>
     </ion-nav-bar>
     <!-- 
       The views will be rendered in the <ion-nav-view> directive below

@@ -1,5 +1,32 @@
-<ion-view title="Dashboard">
-  <ion-content class="padding">
-    <h1>Dash</h1>
+<ion-view title="{{ rootNote.title || 'Root'}}">
+
+  <ion-content class="padding" ng-switch="rootNote.note_category">
+    <ion-list show-delete="data.showDelete" can-swipe="true" ng-switch-when="1">
+      <ion-item ng-repeat="note in notes" icon="icon ion-plus-round" href="#/tab/friend/{{note.id}}" ng-switch="note.note_category">
+        <div class='ion-folder' ng-switch-when='1'>  {{note.title}} </div>
+        <div class='ion-document' ng-switch-when='2'> {{note.title}} </div>
+        <div ng-class="{true: 'positive', false: 'negative'}[note.amount >= 0]">
+        {{note.amount}}</div>
+        {{parseDate(note.created_at)}}
+        <ion-delete-button class="ion-minus-circled" ng-click="logger(note.id)">
+        </ion-delete-button>
+        <ion-option-button class="button button-info" ng-click="edit(item)">
+          Edit
+        </ion-option-button>
+      </ion-item>
+    </ion-list>
+    <form ng-submit="updateNote(dummy)" ng-switch-when="2">
+      <div class="list">
+        <label class="item item-input item-stacked-label">
+          <span class="input-label">Title</span>
+          <input type="text" ng-model="dummy.title">
+        </label>
+        <label class="item item-input item-stacked-label">
+          <span class="input-label">Amount</span>
+          <input type="text" ng-model="dummy.amount">
+        </label>
+        <input type="submit" class="button button-block button-positive"/>
+      </div>
+    </form>
   </ion-content>
 </ion-view>
