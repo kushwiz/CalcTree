@@ -3,13 +3,9 @@ angular.module('starter.controllers', [])
 .controller('DashCtrl', function($scope, $state, Notes) {
 
   $scope.data = {
-    showDelete: false
+    showDelete: false,
+    totalAmount: 0
   };
-
-  Notes.getRoots().then(function(result){
-    $scope.notes = result;
-    $scope.rootNote = {id: 0, title: 'Root Folder', note_category: 1};
-  });
 
   $scope.logger = function(string) {
     console.log(string);
@@ -20,13 +16,20 @@ angular.module('starter.controllers', [])
     $scope.data.showDelete = false;
     Notes.getRoots().then(function(result){
       $scope.notes = result;
-      $scope.rootNote = {title: 'Root Folder', note_category: 1};
+      $scope.rootNote = {id: 0, title: 'Root Folder', note_category: 1};
     });
   };
 
   $scope.newNote = function() {
     $state.go('tab.new-note',{parent: $scope.rootNote.id});
   };
+
+  $scope.totalAmount = function() {
+    Notes.total($scope.rootNote).then(function(result){
+      $scope.data.totalAmount = result;
+    });
+  };
+
 
   $scope.parseDate = function(timestamp){
     return (new Date(parseInt(timestamp))).toDateString();
@@ -36,6 +39,13 @@ angular.module('starter.controllers', [])
     return number.toLocaleString();
   };
 
+  Notes.getRoots().then(function(result){
+    $scope.notes = result;
+    $scope.rootNote = {id: 0, title: 'Root Folder', note_category: 1};
+    $scope.totalAmount();
+  });
+
+
 })
 
 .controller('FriendsCtrl', function($scope, Friends) {
@@ -43,17 +53,17 @@ angular.module('starter.controllers', [])
 })
 
 .controller('FriendDetailCtrl', function($scope, $stateParams, Notes, $state) {
-  Notes.getById($stateParams.friendId).then(function(result){
-    $scope.rootNote = result;
-    $scope.dummy = angular.copy($scope.rootNote);
-    if (result.note_category == 1) {
-      Notes.getChildren(result.id).then(function(result) {
-        $scope.notes = result;
-      });
-    } else {
-      $scope.notes = [];
-    }
-  });
+
+
+  $scope.prettyAmount = function(number){
+    return number.toLocaleString();
+  };
+
+  $scope.totalAmount = function() {
+    Notes.total($scope.rootNote).then(function(result){
+      $scope.data.totalAmount = result;
+    });
+  };
 
   $scope.updateNote = function(note) {
     Notes.updateNote(note);
@@ -83,6 +93,19 @@ angular.module('starter.controllers', [])
       }
     });
   };
+
+  Notes.getById($stateParams.friendId).then(function(result){
+    $scope.rootNote = result;
+    $scope.dummy = angular.copy($scope.rootNote);
+    if (result.note_category == 1) {
+      Notes.getChildren(result.id).then(function(result) {
+        $scope.notes = result;
+      });
+    } else {
+      $scope.notes = [];
+    }
+    $scope.totalAmount();
+  });
 
 
 })

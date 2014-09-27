@@ -166,5 +166,12 @@ angular.module('starter.services', ['starter.config'])
       });
     };
 
+    self.total = function(note) {
+      return DB.query('SELECT SUM(amount) as samount FROM notes WHERE parent = ?', [note.id])
+      .then(function(result){
+        return DB.fetch(result).samount;
+      });
+    };
+
     return self;
 });

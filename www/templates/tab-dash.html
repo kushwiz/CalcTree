@@ -37,5 +37,9 @@
         <input type="submit" class="button button-block button-positive"/>
       </div>
     </form>
+  <div class="bar" ng-class="{true:'bar-balanced', false: 'bar-assertive'}[data.totalAmount >= 0]" ng-switch-when="1">
+  <div class="title">₹{{prettyAmount(data.totalAmount)}}</div>
+</div>
   </ion-content>
+
 </ion-view>
